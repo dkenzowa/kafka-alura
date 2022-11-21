@@ -1,6 +1,7 @@
 package ecommerce;
 
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.kafka.clients.producer.Callback;
@@ -13,8 +14,9 @@ public class NewOrderMain {
 	
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		var producer = new KafkaProducer<String, String>(properties());
-		var value = "123, 321, 5102";
-		var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", value, value);
+		var key = UUID.randomUUID().toString();
+		var value = key + ", 321, 5102";
+		var record = new ProducerRecord<>("ECOMMERCE_NEW_ORDER", key, value);
 		Callback callback = (data, ex) -> {
 			if(ex != null) {
 				ex.printStackTrace();
@@ -24,7 +26,7 @@ public class NewOrderMain {
 		};
 		
 		var email = "Thanks, we are processing your order!";
-		var emailRecord = new ProducerRecord<> ("ECOMMERCE_SEND_EMAIL", email, email);
+		var emailRecord = new ProducerRecord<> ("ECOMMERCE_SEND_EMAIL", key, email);
 		
 		producer.send(record, callback).get();
 		producer.send(emailRecord, callback).get();
