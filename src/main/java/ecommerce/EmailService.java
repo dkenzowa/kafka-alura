@@ -1,12 +1,14 @@
 package ecommerce;
 
+import java.util.Map;
+
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 public class EmailService {
 	public static void main(String[] args) {
 		var EmailService = new EmailService();
 		try (var service = new KafkaService(EmailService.class.getSimpleName(), "ECOMMERCE_SEND_EMAIL",
-				EmailService::parse)) {
+				EmailService::parse, String.class, Map.of())) {
 			service.run();
 		}
 
